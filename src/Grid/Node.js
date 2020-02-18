@@ -1,21 +1,36 @@
 import React, { useState, useEffect } from "react";
+import "./Node.css";
 
-const style = {
-  width: "20px",
-  height: "20px",
-  outline: "1px solid rgb(175, 216, 248)"
-};
-const Node = ({ row, col, isFinish, isStart, isWall, isVisited }) => {
-  let temp = "white";
-  if (isStart) temp = "green";
-  else if (isFinish) temp = "red";
-  else if (isVisited) temp = "orange";
-  else if (isWall) temp = "black";
-  const style1 = {
-    ...style,
-    backgroundColor: temp
-  };
-  return <div style={style1}></div>;
+const style = {};
+const Node = ({
+  row,
+  col,
+  isFinish,
+  isStart,
+  isWall,
+  isVisited,
+  onMouseDown,
+  onMouseEnter,
+  onMouseUp
+}) => {
+  const extraClassName = isFinish
+    ? "node-finish"
+    : isStart
+    ? "node-start"
+    : isWall
+    ? "node-wall"
+    : isVisited
+    ? "node-visited"
+    : "";
+  return (
+    <div
+      id={`node-${row}-${col}`}
+      className={`node ${extraClassName}`}
+      onMouseDown={() => onMouseDown(row, col)}
+      onMouseEnter={() => onMouseEnter(row, col)}
+      onMouseUp={() => onMouseUp()}
+    ></div>
+  );
 };
 
 export default Node;

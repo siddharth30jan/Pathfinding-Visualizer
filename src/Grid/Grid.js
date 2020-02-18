@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Node from "./Node";
-import { dijkstra, getNodesInShortestPathOrder } from "../Dijikstra";
+import { dijkstra, getNodesInShortestPathOrder } from "../Dijkstra";
 
 const START_NODE_ROW = 10;
-const START_NODE_COL = 10;
-const FINISH_NODE_ROW = 19;
-const FINISH_NODE_COL = 15;
+const START_NODE_COL = 12;
+const FINISH_NODE_ROW = 40;
+const FINISH_NODE_COL = 12;
 const Grid = () => {
   const [grid, fGrid] = useState([]);
   const [gridCopy, fGridCopy] = useState([]);
+  const [press, fPress] = useState(false);
   useEffect(() => {
     const vGrid = [];
     const cGrid = [];
@@ -45,15 +46,52 @@ const Grid = () => {
     fGrid(vGrid);
     fGridCopy(cGrid);
   }, []);
-  const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
-    //fGrid(gridCopy);
 
-    for (let node of visitedNodesInOrder) {
+  const onMouseDown = (row, col) => {
+    //turn it into black
+    fPress(true);
+    let X = grid.slice(0);
+    X[row][col].isWall = true;
+    fGrid(X);
+    fGridCopy(X);
+  };
+  const onMouseEnter = (row, col) => {
+    //turn it into black
+    if (!press) return;
+    let X = grid.slice(0);
+    X[row][col].isWall = true;
+    fGrid(X);
+    fGridCopy(X);
+  };
+  const onMouseUp = (row, col) => {
+    //turn it into black
+    fPress(false);
+  };
+
+  const animateShortestPath = nodesInShortestPathOrder => {
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
-        let X = grid.slice(0);
-        X[node.row][node.col] = node;
-        fGrid(X);
-      }, 5);
+        const node = nodesInShortestPathOrder[i];
+        document.getElementById(
+          `node-${node.row}-${node.col}`
+        ).className = `node node-final`;
+      }, i * 5);
+    }
+  };
+
+  const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          animateShortestPath(nodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-visited";
+      }, 10 * i);
     }
   };
   const createDijikstra = () => {
@@ -72,21 +110,23 @@ const Grid = () => {
     //console.log(grid);
     return (
       <div>
-        <div style={{ marginLeft: "100px" }}>
-          <button
+        <div style={{ marginLeft: "100px", width: "600px" }}>
+          <div
             style={{
-              color: "blue",
-              height: "50px",
-              weight: "50px",
+              padding: "10px",
+              color: "black",
+              height: "100px",
+              weight: "100%",
               border: "3px solid black",
-              cursor: "pointer"
+              cursor: "pointer",
+              background: "blue"
             }}
             onClick={e => {
               createDijikstra();
             }}
           >
-            GO DIJIKSTRA!
-          </button>
+            <h1>GO DIJKSTRA!</h1>
+          </div>
         </div>
         <div style={{ display: "flex", marginLeft: "100px" }}>
           {grid.map(x => {
@@ -103,6 +143,9 @@ const Grid = () => {
                       isStart={isStart}
                       isWall={isWall}
                       isVisited={isVisited}
+                      onMouseDown={onMouseDown}
+                      onMouseEnter={onMouseEnter}
+                      onMouseUp={onMouseUp}
                     />
                   );
                 })}
