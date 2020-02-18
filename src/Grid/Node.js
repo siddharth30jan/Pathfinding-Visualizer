@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 const style = {
-  width: "25px",
-  height: "25px",
-  outline: "1px solid rgb(175, 216, 248)",
-  display: "inline-block"
+  width: "20px",
+  height: "20px",
+  outline: "1px solid rgb(175, 216, 248)"
 };
 const Node = ({ row, col, isFinish, isStart, isWall, isVisited }) => {
   let temp = "white";
